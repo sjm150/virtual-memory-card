@@ -10,6 +10,13 @@ async def create_post(post: PostModel):
     result = await db.posts.insert_one(post.dict())
     return {"id": str(result.inserted_id)}
 
+@app.get("/posts")
+async def get_posts():
+    posts = await db.posts.find({}).to_list(length=None)
+    for post in posts:
+        post["_id"] = str(post["_id"])
+    return posts
+
 @app.get("/posts/{id}")
 async def get_post(id: str):
     post = await db.posts.find_one({"_id": ObjectId(id)})
